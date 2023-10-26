@@ -81,3 +81,27 @@ export const getMe = async (req: RequestWithUser, res: Response) => {
   const id = req.user._id;
   return res.send(await User.findById(id));
 };
+
+export const updateUserInfo = (req: RequestWithUser, res: Response, next: NextFunction) => {
+  const id = req.user._id;
+  const { email, firstName, about } = req.body;
+  User.findByIdAndUpdate(
+    id,
+    {
+      email,
+      firstName,
+      about,
+    },
+    {
+      new: true,
+    }
+  )
+    .then(user => {
+      if (user) res.send(user);
+    })
+    .catch(err => {
+      if (err.name === "ValidationError")
+        return next(new SyntaxError("Переданы некорректные данные для обновления информации."));
+      return next(err);
+    });
+};

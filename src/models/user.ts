@@ -20,6 +20,10 @@ const userSchema = new mongoose.Schema({
     required: true,
     select: false,
   },
+  about: {
+    type: String,
+    default: "",
+  },
 });
 
 export default mongoose.model("user", userSchema);
