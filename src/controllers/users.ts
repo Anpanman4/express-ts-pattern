@@ -12,22 +12,22 @@ import AlreadyCreatedError from "../errors/alreadyCreatedError";
 import AuthError from "../errors/authError";
 
 import { JWT_SECRET_KEY } from "../utils/utils";
+import { RequestWithUser } from "../types/reqWithUser";
 
 dotenv.config();
 
 export const register = (req: Request, res: Response, next: NextFunction) => {
-  const { email, password } = req.body;
+  const { email, password, username, firstName } = req.body;
 
   hash(password, 10)
     .then(hashedPassword => {
-      return { email, password: hashedPassword };
+      return { email, password: hashedPassword, username, firstName };
     })
     .then((body: userBody) => {
       User.create(body)
         .then(user => {
           if (user) {
-            console.log();
-            res.status(201).send({ email });
+            res.status(201).send({ email, username, firstName });
           }
         })
         .catch(err => {
@@ -68,6 +68,16 @@ export const login = (req: Request, res: Response, next: NextFunction) => {
     .catch(next);
 };
 
-export const getUsers = async (req: Request, res: Response) => {
-  res.send(await User.find({}));
+export const getUsers = async (req: RequestWithUser, res: Response) => {
+  return res.send(await User.find({}));
+};
+
+export const getUserById = async (req: RequestWithUser, res: Response) => {
+  const { id } = req.params;
+  return res.send(await User.findById(id));
+};
+
+export const getMe = async (req: RequestWithUser, res: Response) => {
+  const id = req.user._id;
+  return res.send(await User.findById(id));
 };
