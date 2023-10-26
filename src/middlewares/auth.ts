@@ -18,7 +18,6 @@ export const authMiddleware = (req: RequestWithUser, res: Response, next: NextFu
   } catch (error) {
     return next(new AuthError("Необходима авторизация"));
   }
-  console.log(req.user);
 
   return next();
 };
