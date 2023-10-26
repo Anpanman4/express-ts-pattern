@@ -3,8 +3,9 @@ import jsonwebtoken from "jsonwebtoken";
 import { JWT_SECRET_KEY } from "../utils/utils";
 
 import AuthError from "../errors/authError";
+import { RequestWithUser } from "../types/reqWithUser";
 
-export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
+export const authMiddleware = (req: RequestWithUser, res: Response, next: NextFunction) => {
   const { authorization } = req.headers;
 
   if (!authorization || !authorization.startsWith("Bearer ")) {
@@ -17,7 +18,6 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
   } catch (error) {
     return next(new AuthError("Необходима авторизация"));
   }
-
   console.log(req.user);
 
   return next();
